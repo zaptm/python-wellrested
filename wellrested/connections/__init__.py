@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 class RestClient(object):
     content_type = None
+	accept = None
 
     def __init__(self, base_url, username=None, password=None,
                  connection_class=None, **kwargs):
@@ -43,7 +44,8 @@ class RestClient(object):
         response_headers, response_content = \
             self._connection.request(resource, method, args=args,
                                      body=request_body, headers=headers,
-                                     content_type=self.content_type)
+                                     content_type=self.content_type,
+									 accept=self.accept)
         if response_headers.get('status') == HTTP_STATUS_OK:
             response_data = self._deserialize(response_content)
         return Response(response_headers, response_content, response_data)
@@ -57,6 +59,7 @@ class RestClient(object):
 
 class JsonRestClient(RestClient):
     content_type = 'application/json'
+	accept = 'application/json'
 
     def _serialize(self, data):
         if data:
@@ -87,7 +90,7 @@ class JsonRestClient(RestClient):
 
 class XmlRestClient(RestClient):
     content_type = 'text/xml'
-
+	accept = 'text/xml'
 
 class Response(object):
     def __init__(self, headers, content, data):
@@ -115,7 +118,7 @@ class BaseConnection(object):
         return mimetypes.guess_type(filename)[0] or 'application/octet-stream'
 
     def request(self, resource, method="get", args=None, body=None,
-                headers=None, content_type=None):
+                headers=None, content_type=None, accept=None):
         raise NotImplementedError
 
 
@@ -135,13 +138,16 @@ class Connection(BaseConnection):
             self._conn.add_credentials(self.username, self.password)
 
     def request(self, resource, method, args=None, body=None, headers=None,
-                content_type=None):
+                content_type=None, accept=None):
         if headers is None:
             headers = {}
 
         params = None
         path = resource
         headers['User-Agent'] = 'Basic Agent'
+
+		if accept is not None:
+			headers["Accept"] = accept
 
         BOUNDARY = mimetools.choose_boundary()
         CRLF = u'\r\n'
