@@ -114,6 +114,9 @@ class BaseConnection(object):
         self.host = netloc
         self.path = path
 
+        if self.path == "/":
+            self.path = ""
+
     def _get_content_type(self, filename):
         return mimetypes.guess_type(filename)[0] or 'application/octet-stream'
 
