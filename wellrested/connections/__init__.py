@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class RestClient(object):
     content_type = None
-	accept = None
+    accept = None
 
     def __init__(self, base_url, username=None, password=None,
                  connection_class=None, **kwargs):
@@ -45,7 +45,7 @@ class RestClient(object):
             self._connection.request(resource, method, args=args,
                                      body=request_body, headers=headers,
                                      content_type=self.content_type,
-									 accept=self.accept)
+                                     accept=self.accept)
         if response_headers.get('status') == HTTP_STATUS_OK:
             response_data = self._deserialize(response_content)
         return Response(response_headers, response_content, response_data)
@@ -59,7 +59,7 @@ class RestClient(object):
 
 class JsonRestClient(RestClient):
     content_type = 'application/json'
-	accept = 'application/json'
+    accept = 'application/json'
 
     def _serialize(self, data):
         if data:
@@ -90,7 +90,7 @@ class JsonRestClient(RestClient):
 
 class XmlRestClient(RestClient):
     content_type = 'text/xml'
-	accept = 'text/xml'
+    accept = 'text/xml'
 
 class Response(object):
     def __init__(self, headers, content, data):
@@ -146,8 +146,8 @@ class Connection(BaseConnection):
         path = resource
         headers['User-Agent'] = 'Basic Agent'
 
-		if accept is not None:
-			headers["Accept"] = accept
+        if accept is not None:
+            headers["Accept"] = accept
 
         BOUNDARY = mimetools.choose_boundary()
         CRLF = u'\r\n'
